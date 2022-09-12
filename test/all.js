@@ -13,6 +13,19 @@ test('simple open and close', async t => {
   t.is(m.m.size, 1)
 })
 
+test('closing non-existing resource', async t => {
+  const m = new ResourceMap()
+  await m.close('bad-id')
+  t.is(m.m.size, 0)
+})
+
+test('open twice after fully opened', async t => {
+  const m = new ResourceMap()
+  const r1 = await m.open('a', create)
+  const r2 = await m.open('a', create)
+  t.ok(r1 === r2)
+})
+
 test('concurrently opening a resource twice', async t => {
   const m = new ResourceMap()
   const [r1, r2] = await Promise.all([
@@ -20,6 +33,22 @@ test('concurrently opening a resource twice', async t => {
     m.open('a', create)
   ])
   t.ok(r1 === r2)
+})
+
+test('concurrently closing a resource three times', async t => {
+  const m = new ResourceMap()
+  const [r1, r2] = await Promise.all([
+    m.open('a', create),
+    m.open('a', create)
+  ])
+  await Promise.all([
+    m.close('a'),
+    m.close('a'),
+    m.close('a')
+  ])
+  t.ok(r1.closed)
+  t.ok(r2.closed)
+  t.is(m.m.size, 0)
 })
 
 test('open then concurrent close/open', async t => {
@@ -30,7 +59,7 @@ test('open then concurrent close/open', async t => {
     m.open('a', create)
   ])
   t.is(m.m.size, 1)
-  t.ok(await m.get('a') !== r1)
+  t.ok(m.m.get('a') !== r1)
 })
 
 function create () {
