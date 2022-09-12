@@ -6,16 +6,16 @@ module.exports = class ReadyResourceMap {
     this._refs = new Map()
   }
 
-  _onError (id) {
-    this._closing.delete(id)
-    this._opening.delete(id)
-    this._refs.delete(id)
-    this.m.delete(id)
-  }
-
   async _openResource (id, cons) {
-    const o = await cons()
-    await o.ready()
+    let o = null
+    try {
+      o = await cons()
+      await o.ready()
+    } catch (err) {
+      this._opening.delete(id)
+      this._refs.delete(id)
+      throw err
+    }
     this.m.set(id, o)
     this._opening.delete(id)
     return o
@@ -23,15 +23,22 @@ module.exports = class ReadyResourceMap {
 
   async _closeResource (id) {
     const o = this.m.get(id)
-    await o.close()
-    this.m.delete(id)
-    this._closing.delete(id)
-    this._refs.delete(id)
+    try {
+      await o.close()
+    } finally {
+      this.m.delete(id)
+      this._closing.delete(id)
+      this._refs.delete(id)
+    }      
   }
 
   async open (id, cons) {
     while (this._closing.has(id)) {
-      await this._closing.get(id)
+      try {
+        await this._closing.get(id)
+      } catch {
+        continue
+      }
     }
     const count = this._refs.get(id) || 0
     this._refs.set(id, count + 1)
@@ -41,7 +48,6 @@ module.exports = class ReadyResourceMap {
     }
 
     const opening = this._openResource(id, cons)
-    opening.catch(() => this._onError(id))
     this._opening.set(id, opening)
     return opening
   }
@@ -53,7 +59,6 @@ module.exports = class ReadyResourceMap {
     if (count > 1) return
 
     const closing = this._closeResource(id)
-    closing.catch(() => this._onError(id))
     this._closing.set(id, closing)
     return closing
   }
