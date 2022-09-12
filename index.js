@@ -29,7 +29,7 @@ module.exports = class ReadyResourceMap {
       this.m.delete(id)
       this._closing.delete(id)
       this._refs.delete(id)
-    }      
+    }
   }
 
   async open (id, cons) {
