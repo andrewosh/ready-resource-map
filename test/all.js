@@ -60,6 +60,9 @@ test('concurrently closing a resource three times', async t => {
   t.ok(r1.closed)
   t.ok(r2.closed)
   t.is(m.m.size, 0)
+  t.is(m._refs.size, 0)
+  t.is(m._opening.size, 0)
+  t.is(m._closing.size, 0)
 })
 
 test('open then concurrent close/open', async t => {
@@ -80,6 +83,9 @@ test('open/close errors garbage collect', async t => {
   t.is(m.m.size, 1)
   await t.exception(() => m.close('b'))
   t.is(m.m.size, 0)
+  t.is(m._refs.size, 0)
+  t.is(m._opening.size, 0)
+  t.is(m._closing.size, 0)
 })
 
 function create () {
