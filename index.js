@@ -10,10 +10,7 @@ module.exports = class ReadyResourceMap {
     const release = await this._lock()
     try {
       const e = this.m.get(id)
-      if (e) {
-        if (!e.closing) return e
-        await e.close()
-      }
+      if (e) return e
       const o = await cons()
       await o.ready()
       this.m.set(id, o)
