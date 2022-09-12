@@ -3,6 +3,17 @@ const ReadyResource = require('ready-resource')
 
 const ResourceMap = require('..')
 
+class OpenErrorResource extends ReadyResource {
+  async _open () {
+    throw new Error('Open Error')
+  }
+}
+class CloseErrorResource extends ReadyResource {
+  async _close () {
+    throw new Error('Close Error')
+  }
+}
+
 test('simple open and close', async t => {
   const m = new ResourceMap()
   const r1 = await m.open('a', create)
@@ -60,6 +71,15 @@ test('open then concurrent close/open', async t => {
   ])
   t.is(m.m.size, 1)
   t.ok(m.m.get('a') !== r1)
+})
+
+test('open/close errors garbage collect', async t => {
+  const m = new ResourceMap()
+  await t.exception(() => m.open('a', () => new OpenErrorResource()))
+  await m.open('b', () => new CloseErrorResource())
+  t.is(m.m.size, 1)
+  await t.exception(() => m.close('b'))
+  t.is(m.m.size, 0)
 })
 
 function create () {
