@@ -10,7 +10,7 @@ module.exports = class ReadyResourceMap {
     let o = null
     try {
       o = await cons()
-      o.ready()
+      await o.ready()
     } catch (err) {
       this._opening.delete(id)
       this._refs.delete(id)
