@@ -1,0 +1,32 @@
+{
+  "name": "ready-resource-map",
+  "version": "1.0.0",
+  "description": "A Map that manages ready-resource opening/closing",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && brittle test/*.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/andrewosh/ready-resource-map.git"
+  },
+  "keywords": [
+    "ready",
+    "resource",
+    "map"
+  ],
+  "author": "Andrew Osheroff <andrewosh@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/andrewosh/ready-resource-map/issues"
+  },
+  "homepage": "https://github.com/andrewosh/ready-resource-map#readme",
+  "devDependencies": {
+    "brittle": "^3.1.0",
+    "ready-resource": "^1.0.0",
+    "standard": "^17.0.0"
+  },
+  "dependencies": {
+    "mutexify": "^1.4.0"
+  }
+}
