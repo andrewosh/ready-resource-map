@@ -88,6 +88,26 @@ test('open/close errors garbage collect', async t => {
   t.is(m._closing.size, 0)
 })
 
+test('sync api', async t => {
+  const m = new ResourceMap()
+  const [r1, r2] = await Promise.all([
+    m.open('a', create),
+    m.open('b', create)
+  ])
+
+  t.ok(m.has('a'))
+  t.is(m.get('a'), r1)
+  t.absent(m.has('c'))
+
+  let seen = 0
+  for (const [id, resource] of m) {
+    seen++
+    if (id === 'a') t.is(resource, r1)
+    if (id === 'b') t.is(resource, r2)
+  }
+  t.is(seen, 2)
+})
+
 function create () {
   return new ReadyResource()
 }

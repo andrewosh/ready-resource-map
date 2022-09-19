@@ -32,6 +32,8 @@ module.exports = class ReadyResourceMap {
     }
   }
 
+  // Async API
+
   async open (id, cons) {
     while (this._closing.has(id)) {
       try {
@@ -61,5 +63,31 @@ module.exports = class ReadyResourceMap {
     const closing = this._closeResource(id)
     this._closing.set(id, closing)
     return closing
+  }
+
+  // Sync API
+
+  has (id) {
+    return this.m.has(id)
+  }
+
+  get (id) {
+    return this.m.get(id)
+  }
+
+  [Symbol.iterator] () {
+    return this.m[Symbol.iterator]()
+  }
+
+  * keys () {
+    for (const key of this.m.keys()) {
+      yield key
+    }
+  }
+
+  * values () {
+    for (const value of this.m.values()) {
+      yield value
+    }
   }
 }
