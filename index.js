@@ -27,11 +27,13 @@ module.exports = class ReadyResourceMap {
     const count = this._refs.get(id) || 0
     this._refs.set(id, count + 1)
 
-    if (existing) return existing
+    if (existing) {
+      if (!existing.opened) await existing.ready()
+      return existing
+    }
 
     const res = cons()
     this.m.set(id, res)
-    res.once('close', () => this._onClose(id))
 
     try {
       await res.ready()
@@ -40,6 +42,7 @@ module.exports = class ReadyResourceMap {
       throw err
     }
 
+    res.once('close', () => this._onClose(id))
     return res
   }
 
