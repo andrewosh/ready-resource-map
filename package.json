@@ -25,5 +25,8 @@
     "brittle": "^3.1.0",
     "ready-resource": "^1.0.0",
     "standard": "^17.0.0"
+  },
+  "dependencies": {
+    "tiny-buffer-map": "^1.0.0"
   }
 }

@@ -1,9 +1,11 @@
+const BufferMap = require('tiny-buffer-map')
+
 module.exports = class ReadyResourceMap {
   constructor () {
-    this.m = new Map()
-    this._closing = new Map()
-    this._opening = new Map()
-    this._refs = new Map()
+    this.m = new BufferMap()
+    this._closing = new BufferMap()
+    this._opening = new BufferMap()
+    this._refs = new BufferMap()
   }
 
   async _openResource (id, cons) {
