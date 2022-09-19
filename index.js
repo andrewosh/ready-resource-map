@@ -36,8 +36,7 @@ module.exports = class ReadyResourceMap {
     try {
       await res.ready()
     } catch (err) {
-      this.m.delete(id)
-      this._refs.delete(id)
+      this._onClose(id)
       throw err
     }
 
