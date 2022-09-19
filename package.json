@@ -1,6 +1,6 @@
 {
   "name": "ready-resource-map",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "A Map that manages ready-resource opening/closing",
   "main": "index.js",
   "scripts": {
